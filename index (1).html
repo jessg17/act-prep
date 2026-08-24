@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACT Prep — Training Log</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #F4F6F8;
+    color: #1E2530;
+    max-width: 720px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+  }
+  .tabular { font-variant-numeric: tabular-nums; }
+  button { font-family: inherit; cursor: pointer; }
+  input, textarea, select { font-family: inherit; }
+
+  .header { background: #1E2530; color: #F4F6F8; padding: 20px 20px 0; position: sticky; top: 0; z-index: 10; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+  .eyebrow { font-size: 11px; letter-spacing: 1.5px; color: #5B8DEF; font-weight: 600; margin-bottom: 4px; }
+  .wordmark { font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 600; }
+  .clock-block { text-align: right; }
+  .clock-number { font-family: 'Oswald', sans-serif; font-size: 34px; font-weight: 700; line-height: 1; color: #5B8DEF; }
+  .clock-label { font-size: 9.5px; letter-spacing: 0.6px; color: rgba(244,246,248,0.67); margin-top: 4px; line-height: 1.4; }
+  .nav { display: flex; gap: 2px; border-top: 1px solid rgba(244,246,248,0.13); }
+  .nav-btn { flex: 1; background: none; border: none; color: rgba(244,246,248,0.53); padding: 12px 4px; font-size: 12.5px; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 4px; border-bottom: 2px solid transparent; }
+  .nav-btn.active { color: #F4F6F8; border-bottom: 2px solid #5B8DEF; }
+  .save-flash { position: fixed; top: 20px; right: 20px; font-size: 11px; color: #3D7A6E; background: #F4F6F8; padding: 3px 8px; border-radius: 3px; opacity: 0; transition: opacity 0.4s; pointer-events: none; z-index: 100; }
+  .save-flash.show { opacity: 1; }
+
+  .body { padding: 20px 20px 0; }
+  .pane { display: flex; flex-direction: column; gap: 4px; }
+  .section-label-wrap { margin-top: 20px; margin-bottom: 10px; }
+  .section-label { font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 1.2px; border-bottom: 2px solid #1E2530; display: inline-block; padding-bottom: 3px; }
+  .section-label-sub { font-size: 12px; color: rgba(30,37,48,0.53); margin-top: 4px; }
+
+  .hero-card { background: #1E2530; border-radius: 10px; padding: 18px; }
+  .hero-card-inner { display: flex; align-items: center; gap: 14px; }
+  .hero-title { font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: 600; color: #F4F6F8; margin-bottom: 6px; }
+  .hero-sub { font-size: 13px; color: rgba(244,246,248,0.73); line-height: 1.5; }
+
+  .grid-sections { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .mini-card { background: #FFFFFF; border: 1px solid rgba(30,37,48,0.08); border-radius: 8px; padding: 14px; }
+  .mini-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .jersey-tag { font-family: 'Oswald', sans-serif; font-size: 10.5px; font-weight: 600; color: #1E2530; padding: 3px 7px; border-radius: 4px; letter-spacing: 0.5px; }
+  .weak-flag { font-size: 9.5px; font-weight: 700; color: #B23B3B; letter-spacing: 0.5px; }
+  .mini-card-number { font-family: 'Oswald', sans-serif; font-size: 28px; font-weight: 700; }
+  .mini-card-sub { font-size: 11.5px; color: rgba(30,37,48,0.47); margin-top: 2px; }
+
+  .stats-row { display: flex; gap: 10px; }
+  .stat-block { flex: 1; background: #FFFFFF; border: 1px solid rgba(30,37,48,0.08); border-radius: 8px; padding: 14px 10px; text-align: center; }
+  .stat-value { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700; }
+  .stat-label { font-size: 9px; letter-spacing: 0.4px; color: rgba(30,37,48,0.47); margin-top: 4px; }
+
+  .empty-nudge { display: flex; align-items: center; gap: 8px; background: rgba(91,141,239,0.09); border: 1px solid rgba(91,141,239,0.25); border-radius: 8px; padding: 14px; font-size: 13px; line-height: 1.5; margin-top: 10px; flex-wrap: wrap; }
+  .small-btn { background: #1E2530; color: #F4F6F8; border: none; border-radius: 6px; padding: 8px 14px; font-size: 12.5px; font-weight: 500; margin-top: 4px; }
+
+  .toggle-row { display: flex; gap: 8px; margin-bottom: 16px; }
+  .toggle-btn { flex: 1; background: #FFFFFF; border: 1px solid rgba(30,37,48,0.13); border-radius: 8px; padding: 10px 8px; font-size: 13px; font-weight: 600; color: rgba(30,37,48,0.6); }
+  .toggle-btn.active { background: #1E2530; color: #F4F6F8; border-color: #1E2530; }
+
+  .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .filter-chip { background: #FFFFFF; border: 1px solid rgba(30,37,48,0.13); border-radius: 16px; padding: 6px 13px; font-size: 12.5px; font-weight: 500; }
+  .filter-chip.active { color: #F4F6F8; }
+
+  .session-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(61,122,110,0.07); border: 1px solid rgba(61,122,110,0.2); border-radius: 8px; padding: 10px 12px; font-size: 13px; margin-bottom: 12px; }
+  .save-session-btn { background: #3D7A6E; color: #F4F6F8; border: none; border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 500; }
+
+  .question-card { background: #FFFFFF; border: 1px solid rgba(30,37,48,0.08); border-radius: 10px; padding: 18px; }
+  .question-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .question-text { font-size: 15px; line-height: 1.5; margin-bottom: 16px; }
+  .choices { display: flex; flex-direction: column; gap: 8px; }
+  .choice { display: flex; align-items: center; gap: 10px; background: #F4F6F8; border: 1px solid rgba(30,37,48,0.1); border-radius: 8px; padding: 11px 12px; font-size: 13.5px; text-align: left; width: 100%; }
+  .choice.selected { border-color: #1E2530; background: rgba(30,37,48,0.03); }
+  .choice.correct { background: rgba(61,122,110,0.08); border-color: #3D7A6E; }
+  .choice.wrong { background: rgba(178,59,59,0.07); border-color: #B23B3B; }
+  .choice-letter { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 12px; width: 20px; height: 20px; border-radius: 50%; background: #1E2530; color: #F4F6F8; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .explanation { margin-top: 14px; font-size: 13px; line-height: 1.5; background: rgba(91,122,153,0.07); border-radius: 6px; padding: 12px; }
+  .next-btn { margin-top: 14px; background: #1E2530; color: #F4F6F8; border: none; border-radius: 8px; padding: 11px; width: 100%; font-size: 13.5px; font-weight: 500; }
+  .icon-btn { background: none; border: none; color: rgba(30,37,48,0.4); padding: 4px; font-size: 14px; }
+
+  .form-card { background: #FFFFFF; border: 1px solid rgba(30,37,48,0.08); border-radius: 10px; padding: 16px; }
+  .form-label { font-size: 10.5px; font-weight: 600; letter-spacing: 0.6px; color: rgba(30,37,48,0.47); margin-top: 14px; margin-bottom: 8px; }
+  textarea, .text-input { width: 100%; border: 1px solid rgba(30,37,48,0.13); border-radius: 6px; padding: 10px; font-size: 13.5px; background: #F4F6F8; color: #1E2530; }
+  .choice-input-row { display: flex; gap: 8px; margin-bottom: 7px; align-items: center; }
+  .correct-toggle { width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(30,37,48,0.2); background: #F4F6F8; font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 12px; color: rgba(30,37,48,0.53); flex-shrink: 0; }
+  .correct-toggle.active { background: #3D7A6E; color: #F4F6F8; border-color: #3D7A6E; }
+  .submit-btn { margin-top: 16px; background: #3D7A6E; color: #F4F6F8; border: none; border-radius: 8px; padding: 11px; width: 100%; font-size: 13.5px; font-weight: 600; }
+  .list-toggle { margin-top: 14px; background: none; border: none; color: rgba(30,37,48,0.6); font-size: 12.5px; padding: 6px 0; }
+  .q-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+  .q-list-item { display: flex; align-items: center; gap: 8px; background: #FFFFFF; border: 1px solid rgba(30,37,48,0.08); border-radius: 6px; padding: 8px 10px; }
+  .q-list-text { flex: 1; font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .seed-banner { display: flex; align-items: center; gap: 12px; background: rgba(61,122,110,0.07); border: 1px solid rgba(61,122,110,0.21); border-radius: 10px; padding: 14px; margin-bottom: 16px; flex-wrap: wrap; }
+  .seed-banner-title { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+  .seed-banner-text { font-size: 12px; color: rgba(30,37,48,0.6); line-height: 1.4; }
+  .seed-banner-btn { background: #3D7A6E; color: #F4F6F8; border: none; border-radius: 8px; padding: 10px 16px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+
+  .phase-card { background: #FFFFFF; border: 1px solid rgba(30,37,48,0.08); border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+  .phase-card.current { border: 1.5px solid #5B8DEF; }
+  .phase-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+  .phase-num { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700; color: #5B8DEF; line-height: 1; }
+  .phase-range { font-size: 10.5px; font-weight: 600; letter-spacing: 0.5px; color: rgba(30,37,48,0.47); }
+  .phase-label { font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 600; margin: 2px 0 4px; }
+  .phase-detail { font-size: 12.5px; color: rgba(30,37,48,0.53); line-height: 1.4; }
+  .phase-progress { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 600; color: rgba(30,37,48,0.4); }
+  .current-badge { font-size: 9px; font-weight: 700; letter-spacing: 0.5px; color: #5B8DEF; margin-top: 4px; }
+  .task-list { display: flex; flex-direction: column; gap: 6px; }
+  .task-row { display: flex; align-items: center; gap: 10px; background: none; border: none; padding: 6px 0; text-align: left; width: 100%; }
+  .checkbox { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid rgba(30,37,48,0.27); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 10px; }
+  .checkbox.done { background: #3D7A6E; border-color: #3D7A6E; color: #F4F6F8; }
+  .task-text.done { color: rgba(30,37,48,0.4); text-decoration: line-through; }
+
+  .deadline-card { background: #1E2530; border-radius: 10px; padding: 16px; margin-top: 10px; }
+  .deadline-title { font-size: 10.5px; font-weight: 600; letter-spacing: 1px; color: #5B8DEF; margin-bottom: 10px; }
+  .deadline-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-top: 1px solid rgba(244,246,248,0.09); }
+  .deadline-label { font-size: 13px; color: #F4F6F8; font-weight: 500; }
+  .deadline-note { font-size: 11px; color: rgba(244,246,248,0.53); margin-top: 2px; }
+  .deadline-date { font-size: 13px; color: #F4F6F8; font-weight: 600; }
+
+  .progress-bars { display: flex; flex-direction: column; gap: 14px; margin-bottom: 10px; }
+  .progress-bar-row { display: flex; flex-direction: column; gap: 6px; }
+  .progress-bar-label-row { display: flex; justify-content: space-between; align-items: center; }
+  .progress-bar-pct { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 600; }
+  .progress-track { height: 8px; background: rgba(30,37,48,0.08); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; }
+
+  .session-log-row { display: flex; align-items: center; background: #FFFFFF; border: 1px solid rgba(30,37,48,0.08); border-radius: 8px; padding: 10px 14px; margin-bottom: 6px; }
+  .session-log-date { font-size: 12.5px; font-weight: 500; flex: 1; }
+  .session-log-meta { font-size: 11.5px; color: rgba(30,37,48,0.47); margin-right: 14px; }
+  .session-log-pct { font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700; }
+
+  .parent-badge { background: #5B8DEF; color: #F4F6F8; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; }
+  .loading-screen { min-height: 100vh; background: #1E2530; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+  .loading-mark { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 42px; color: #5B8DEF; letter-spacing: 2px; }
+  .loading-sub { color: rgba(244,246,248,0.6); font-size: 13px; letter-spacing: 1px; }
+
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div id="loading" class="loading-screen">
+  <div class="loading-mark">ACT</div>
+  <div class="loading-sub">LOADING TRAINING LOG…</div>
+</div>
+
+<div id="app" style="display:none;"></div>
+
+<!-- Firebase SDKs -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, onSnapshot
+  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+  // ====================================================================
+  // FIREBASE CONFIG — replace this with YOUR project's config.
+  // See the setup instructions for exactly where to get these values.
+  // ====================================================================
+  const firebaseConfig = {
+    apiKey: "AIzaSyBNlh9PIyBW48UxL0gjROXW82l3QY_12WI",
+    authDomain: "keaton-act-prep.firebaseapp.com",
+    projectId: "keaton-act-prep",
+    storageBucket: "keaton-act-prep.firebasestorage.app",
+    messagingSenderId: "641482817810",
+    appId: "1:641482817810:web:3723aec41a76c6d06733cb"
+  };
+
+  const DOC_PATH = ['act_prep', 'keaton']; // collection, document id — shared by both views
+
+  let db = null;
+  let firebaseReady = false;
+  try {
+    const fbApp = initializeApp(firebaseConfig);
+    db = getFirestore(fbApp);
+    firebaseReady = true;
+  } catch (e) {
+    console.error('Firebase init failed — check your config.', e);
+  }
+
+  // ---------- Constants ----------
+  const SECTIONS = ['English', 'Math', 'Reading', 'Science'];
+  const SECTION_COLOR = { English: '#9B8759', Math: '#5B8DEF', Reading: '#5B7A99', Science: '#3D7A6E' };
+  const WEAK_SECTIONS = ['Math', 'Science'];
+  const TEST_DATE = new Date('2026-10-17T08:00:00');
+
+  const uid = () => Math.random().toString(36).slice(2, 10);
+
+  function daysUntil(date) {
+    const now = new Date();
+    const diff = date.getTime() - now.getTime();
+    return Math.max(0, Math.ceil(diff / (1000*60*60*24)));
+  }
+
+  // ---------- Dynamic phase calculation ----------
+  // Builds a 4-phase plan that always fits between TODAY and TEST_DATE,
+  // instead of a fixed "Weeks 1-13" plan that goes stale as time passes.
+  function buildPhases() {
+    const now = new Date();
+    const totalDays = Math.max(1, Math.ceil((TEST_DATE - now) / (1000*60*60*24)));
+
+    // Proportional split of whatever time is left:
+    // Diagnostic 10%, Foundation 45%, Strategy 30%, Final Push 15% (min 2 days each if possible)
+    const rawSplits = [0.10, 0.45, 0.30, 0.15];
+    let days = rawSplits.map(p => Math.max(2, Math.round(totalDays * p)));
+    // adjust so the days sum to totalDays exactly
+    let diff = totalDays - days.reduce((a,b)=>a+b,0);
+    days[1] += diff; // absorb any rounding difference into the Foundation phase
+
+    const labels = ['Diagnostic', 'Foundation', 'Strategy & Pacing', 'Final Push'];
+    const details = [
+      'Full timed practice test. Review every miss.',
+      'Math + Science content. The core block.',
+      'Timed sections. Beat the clock.',
+      'Full tests under real conditions. Taper.'
+    ];
+    const tasksByPhase = [
+      ['Take one full timed official ACT practice test', 'Review every missed question — note why', 'Log results in the Drill tab'],
+      ['Khan Academy: algebra + geometry gap-fill', 'ACT Science format videos (2-3 sessions)', 'One timed section, twice a week'],
+      ['Full timed sections, Math + Science priority', 'Time-management drills — practice the clock', 'Log missed questions as you go'],
+      ['Full timed practice tests under real conditions', 'Taper the final 2-3 days', 'Confirm test center + bring photo ID, calculator']
+    ];
+
+    let cursor = new Date(now);
+    const phases = [];
+    for (let i = 0; i < 4; i++) {
+      const start = new Date(cursor);
+      const end = new Date(cursor);
+      end.setDate(end.getDate() + days[i] - 1);
+      phases.push({
+        id: i + 1,
+        label: labels[i],
+        detail: details[i],
+        tasks: tasksByPhase[i],
+        startDate: start,
+        endDate: end,
+        dayCount: days[i],
+      });
+      cursor.setDate(cursor.getDate() + days[i]);
+    }
+    return phases;
+  }
+
+  function fmtDate(d) {
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  function isPhaseCurrent(phase) {
+    const now = new Date();
+    return now >= phase.startDate && now <= new Date(phase.endDate.getTime() + 24*60*60*1000 - 1);
+  }
+
+  // ---------- Original seed questions (not from any copyrighted test) ----------
+  const SEED_QUESTIONS = [
+    { section: 'Math', text: "A rectangle has a length that is 4 inches more than twice its width. If the perimeter is 38 inches, what is the width, in inches?", choices: ['3','5','6','10'], correctIndex: 1, explanation: "Let width = w, length = 2w + 4. Perimeter = 2(w + 2w + 4) = 38, so 6w + 8 = 38, 6w = 30, w = 5." },
+    { section: 'Math', text: "If f(x) = 3x² − 2x + 1, what is f(-2)?", choices: ['9','13','17','21'], correctIndex: 2, explanation: "f(-2) = 3(4) + 4 + 1 = 12 + 4 + 1 = 17." },
+    { section: 'Math', text: "A recipe calls for 3 cups of flour for every 2 cups of sugar. If a baker uses 10 cups of sugar, how many cups of flour are needed?", choices: ['12','13','15','20'], correctIndex: 2, explanation: "3/2 = x/10. Cross-multiply: 2x = 30, x = 15." },
+    { section: 'Math', text: "What is the slope of a line that passes through the points (2, -3) and (6, 5)?", choices: ['1/2','1','2','4'], correctIndex: 2, explanation: "Slope = (5-(-3))/(6-2) = 8/4 = 2." },
+    { section: 'Math', text: "A circle has a circumference of 20π inches. What is the area of the circle, in square inches?", choices: ['10π','20π','100π','400π'], correctIndex: 2, explanation: "2πr = 20π, so r = 10. Area = πr² = 100π." },
+    { section: 'Math', text: "If 3(x - 4) = 2x + 5, what is the value of x?", choices: ['7','13','17','21'], correctIndex: 2, explanation: "3x - 12 = 2x + 5. x - 12 = 5. x = 17." },
+    { section: 'Math', text: "A jar contains 4 red marbles, 5 blue marbles, and 6 green marbles. If one marble is drawn at random, what is the probability it is NOT blue?", choices: ['1/3','2/5','3/5','2/3'], correctIndex: 3, explanation: "Total = 15, not-blue = 10. Probability = 10/15 = 2/3." },
+    { section: 'Math', text: "What is the value of x in the equation 2^(x+1) = 32?", choices: ['3','4','5','16'], correctIndex: 1, explanation: "32 = 2^5, so x + 1 = 5, x = 4." },
+    { section: 'Math', text: "The average of five numbers is 18. If four of the numbers are 12, 20, 15, and 22, what is the fifth number?", choices: ['19','20','21','22'], correctIndex: 2, explanation: "Sum of 5 = 90. Sum of 4 known = 69. Fifth = 90 − 69 = 21." },
+    { section: 'Math', text: "A right triangle has legs of length 9 and 12. What is the length of the hypotenuse?", choices: ['13','14','15','21'], correctIndex: 2, explanation: "c² = 81 + 144 = 225. c = 15." },
+    { section: 'Math', text: "If y varies directly with x, and y = 24 when x = 6, what is y when x = 15?", choices: ['40','48','54','60'], correctIndex: 3, explanation: "y = kx. 24 = 6k, k = 4. y = 4(15) = 60." },
+    { section: 'Math', text: "Simplify: (2x³y²)(3x⁴y⁵)", choices: ['5x⁷y⁷','6x⁷y⁷','6x¹²y¹⁰','5x¹²y¹⁰'], correctIndex: 1, explanation: "Multiply coefficients (6) and add exponents: x⁷y⁷." },
+    { section: 'Science', text: "A student measures water temperature every minute while heating it. Temperature rises steadily until 100°C, then stays flat despite continued heating. Best explanation?", choices: ['The hot plate malfunctioned.','The water is boiling — energy goes into the phase change, not temperature.','The thermometer maxed out.','The water reached equilibrium with the room.'], correctIndex: 1, explanation: "During boiling, added energy breaks molecular bonds (phase change) rather than raising temperature, so it plateaus." },
+    { section: 'Science', text: "Seedlings in full sun average 24cm after 3 weeks; shaded seedlings average 15cm, all else equal. What is the independent variable?", choices: ['Height of the seedlings','Amount of light exposure','Number of weeks elapsed','Species of plant used'], correctIndex: 1, explanation: "The independent variable is what's deliberately changed between groups — light exposure. Height is the dependent (measured) variable." },
+    { section: 'Science', text: "Ocean data: as depth goes 0→1,000m, temperature drops 20°C→4°C and pressure rises 1atm→100atm. What's the best prediction for 2,000m?", choices: ['Temperature keeps dropping, pressure keeps rising.','Temperature rises back up, pressure drops.','Both level off completely.','Both drop to zero.'], correctIndex: 0, explanation: "Extending the established trend: temperature continues falling (though it levels off eventually) and pressure continues rising with depth." },
+    { section: 'Science', text: "A scientist tests fertilizer concentration on tomato yield using 5 groups of 10 plants each. Why use multiple plants per group instead of one?", choices: ['To make the experiment take longer.','To reduce individual plant variation and get a reliable average.','To please fertilizer companies.','To use up excess fertilizer.'], correctIndex: 1, explanation: "A larger sample size reduces the effect of random individual variation, so the average better reflects the true fertilizer effect." },
+    { section: 'Science', text: "A non-degradable pollutant enters water and is absorbed by algae. Small fish eat algae; larger fish eat small fish. What happens to pollutant concentration up the food chain?", choices: ['It decreases at each level.','It stays exactly the same.','It increases at each level (biomagnification).','It disappears at the small-fish stage.'], correctIndex: 2, explanation: "Biomagnification: since the pollutant isn't broken down, it accumulates in each predator eating many prey, increasing at higher trophic levels." },
+    { section: 'Science', text: "An enzyme reaction's rate increases steadily from 10°C to 37°C, then sharply drops from 37°C to 50°C. Best explanation for the drop?", choices: ['The enzyme became more efficient.','The reaction ran out of reactant.','The enzyme denatured at higher temperatures.','The temperature scale was inaccurate above 37°C.'], correctIndex: 2, explanation: "Beyond the optimal range, excess heat disrupts the enzyme's structure (denaturation), reducing its function and sharply lowering reaction rate." },
+    { section: 'English', text: "Choose the best correction: \"Each of the students in the class have completed their assignment.\"", choices: ['No Change','...have completed their assignment.','...have completed his or her assignment.','...has completed his or her assignment.'], correctIndex: 3, explanation: "\"Each\" is singular, requiring the singular verb \"has\" and singular pronoun \"his or her.\"" },
+    { section: 'Reading', text: "A passage describes a scientist who spent decades studying one bird species, eventually overturning an accepted migration theory. The passage is most likely concerned with:", choices: ['general biology of migratory birds.','the dedication and impact of one researcher\'s long-term work.','a comparison of species\' migration habits.','the cost of long-term research.'], correctIndex: 1, explanation: "The focus is on one researcher's sustained work and its significant outcome — dedication and impact." },
+  ];
+
+  const DEFAULT_STATE = { questions: [], sessions: [], checklist: {} };
+
+  // ---------- Cloud storage (Firestore) ----------
+  async function loadState() {
+    if (!firebaseReady) return null;
+    try {
+      const snap = await getDoc(doc(db, DOC_PATH[0], DOC_PATH[1]));
+      if (snap.exists()) return snap.data();
+    } catch (e) { console.error('load failed', e); }
+    return null;
+  }
+
+  async function saveState(state) {
+    if (!firebaseReady) return;
+    try {
+      await setDoc(doc(db, DOC_PATH[0], DOC_PATH[1]), state);
+    } catch (e) { console.error('save failed', e); }
+  }
+
+  function subscribeState(callback) {
+    if (!firebaseReady) return () => {};
+    return onSnapshot(doc(db, DOC_PATH[0], DOC_PATH[1]), (snap) => {
+      if (snap.exists()) callback(snap.data());
+    });
+  }
+
+  // ---------- App state ----------
+  let state = { ...DEFAULT_STATE };
+  const urlParams = new URLSearchParams(window.location.search);
+  const isParentView = urlParams.get('parent') === 'true';
+  let currentView = isParentView ? 'progress' : 'home';
+  let quizState = { current: null, selected: null, revealed: false, sessionAnswers: [], filterSection: 'All', mode: 'practice' };
+  let addFormState = { section: 'Math', text: '', choices: ['','','',''], correctIndex: 0, explanation: '', showList: false };
+
+  function persist(next) {
+    state = next;
+    saveState(state);
+    flashSave();
+    render();
+  }
+
+  function flashSave() {
+    const el = document.getElementById('save-flash');
+    if (!el) return;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 900);
+  }
+
+  function bySectionStats() {
+    return SECTIONS.map(sec => {
+      const answers = state.sessions.flatMap(s => s.answers).filter(a => a.section === sec);
+      const c = answers.filter(a => a.correct).length;
+      return { section: sec, total: answers.length, correct: c, acc: answers.length ? Math.round((c/answers.length)*100) : null };
+    });
+  }
+
+  // ---------- Rendering ----------
+  function render() {
+    const days = daysUntil(TEST_DATE);
+    const app = document.getElementById('app');
+    app.innerHTML = `
+      <div class="header">
+        <div class="header-top">
+          <div>
+            <div class="eyebrow">TRAINING LOG · KEATON ${isParentView ? '<span class="parent-badge" style="margin-left:6px;">PARENT VIEW</span>' : ''}</div>
+            <div class="wordmark">ACT PREP</div>
+          </div>
+          <div class="clock-block">
+            <div class="clock-number tabular">${days}</div>
+            <div class="clock-label">DAYS TO TEST DAY<br/>OCT 17, 2026</div>
+          </div>
+        </div>
+        <div class="nav">
+          ${isParentView ? `
+            <button class="nav-btn active" style="flex:1">Progress Overview</button>
+          ` : `
+            <button class="nav-btn ${currentView==='home'?'active':''}" onclick="setView('home')">Overview</button>
+            <button class="nav-btn ${currentView==='quiz'?'active':''}" onclick="setView('quiz')">Drill</button>
+            <button class="nav-btn ${currentView==='schedule'?'active':''}" onclick="setView('schedule')">Plan</button>
+            <button class="nav-btn ${currentView==='progress'?'active':''}" onclick="setView('progress')">Scouting Report</button>
+          `}
+        </div>
+      </div>
+      <div class="body" id="body-content"></div>
+      <div class="save-flash" id="save-flash">Saved</div>
+    `;
+    const body = document.getElementById('body-content');
+    if (isParentView) {
+      body.innerHTML = renderProgress(true);
+    } else if (currentView === 'home') body.innerHTML = renderHome();
+    else if (currentView === 'quiz') body.innerHTML = renderQuiz();
+    else if (currentView === 'schedule') body.innerHTML = renderSchedule();
+    else if (currentView === 'progress') body.innerHTML = renderProgress(false);
+  }
+
+  window.setView = function(v) { currentView = v; if (v === 'quiz') quizState.current = null; render(); };
+
+  function renderHome() {
+    const stats = bySectionStats();
+    const totalQ = state.questions.length;
+    const attempted = state.sessions.reduce((a,s)=>a+s.answers.length,0);
+    const correct = state.sessions.reduce((a,s)=>a+s.answers.filter(x=>x.correct).length,0);
+    const acc = attempted ? Math.round((correct/attempted)*100) : null;
+
+    return `
+      <div class="pane">
+        <div class="section-label-wrap"><div class="section-label">THIS WEEK</div></div>
+        <div class="hero-card">
+          <div class="hero-card-inner">
+            <div style="flex:1">
+              <div class="hero-title">Focus: Math & Science</div>
+              <div class="hero-sub">These two carry the biggest score gains right now. Science rewards reading graphs fast — not more science facts.</div>
+            </div>
+          </div>
+        </div>
+        <div class="section-label-wrap"><div class="section-label">SCOUTING REPORT</div><div class="section-label-sub">accuracy by section, from logged drills</div></div>
+        <div class="grid-sections">
+          ${stats.map(s => `
+            <div class="mini-card">
+              <div class="mini-card-top">
+                <span class="jersey-tag" style="background:${SECTION_COLOR[s.section]}">${s.section.slice(0,4).toUpperCase()}</span>
+                ${WEAK_SECTIONS.includes(s.section) ? '<span class="weak-flag">DRILL</span>' : ''}
+              </div>
+              <div class="mini-card-number tabular">${s.acc === null ? '—' : s.acc+'%'}</div>
+              <div class="mini-card-sub">${s.total} logged</div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="section-label-wrap"><div class="section-label">ALL-TIME</div></div>
+        <div class="stats-row">
+          <div class="stat-block"><div class="stat-value tabular">${totalQ}</div><div class="stat-label">QUESTIONS IN BANK</div></div>
+          <div class="stat-block"><div class="stat-value tabular">${attempted}</div><div class="stat-label">ATTEMPTED</div></div>
+          <div class="stat-block"><div class="stat-value tabular">${acc===null?'—':acc+'%'}</div><div class="stat-label">OVERALL ACCURACY</div></div>
+        </div>
+        ${totalQ === 0 ? `<div class="empty-nudge">⚠️ No questions logged yet. Head to <strong>Drill</strong> to add questions.</div>` : ''}
+      </div>
+    `;
+  }
+
+  function renderQuiz() {
+    const pool = quizState.filterSection === 'All' ? state.questions : state.questions.filter(q => q.section === quizState.filterSection);
+    if (quizState.mode === 'practice' && !quizState.current && pool.length) {
+      quizState.current = pool[Math.floor(Math.random()*pool.length)];
+      quizState.selected = null;
+      quizState.revealed = false;
+    }
+
+    let html = `<div class="pane">
+      <div class="toggle-row">
+        <button class="toggle-btn ${quizState.mode==='practice'?'active':''}" onclick="setQuizMode('practice')">Drill</button>
+        <button class="toggle-btn ${quizState.mode==='add'?'active':''}" onclick="setQuizMode('add')">Add Questions (${state.questions.length})</button>
+      </div>`;
+
+    if (quizState.mode === 'practice') {
+      html += `<div class="filter-row">
+        ${['All',...SECTIONS].map(s => `<button class="filter-chip ${quizState.filterSection===s?'active':''}" style="${quizState.filterSection===s?'background:#3D7A6E;border-color:#3D7A6E':''}" onclick="setFilter('${s}')">${s}</button>`).join('')}
+      </div>`;
+
+      if (quizState.sessionAnswers.length > 0) {
+        const c = quizState.sessionAnswers.filter(a=>a.correct).length;
+        html += `<div class="session-bar"><span class="tabular">Session: ${c}/${quizState.sessionAnswers.length} correct</span>
+          <button class="save-session-btn" onclick="finishSession()">Log session & reset</button></div>`;
+      }
+
+      if (!quizState.current) {
+        html += `<div class="empty-nudge">⚠️ ${pool.length===0 ? 'No questions in this filter yet. Switch to "Add Questions" to add some.' : 'Session cleared.'}
+          ${pool.length>0 ? '<button class="small-btn" onclick="nextQuestion()">Start drilling</button>' : ''}</div>`;
+      } else {
+        const cur = quizState.current;
+        html += `<div class="question-card">
+          <div class="question-top">
+            <span class="jersey-tag" style="background:${SECTION_COLOR[cur.section]}">${cur.section.slice(0,4).toUpperCase()}</span>
+            <button class="icon-btn" onclick="deleteQuestion('${cur.id}')">🗑</button>
+          </div>
+          <div class="question-text">${cur.text}</div>
+          <div class="choices">
+            ${cur.choices.map((c,i) => {
+              let cls = 'choice';
+              if (quizState.revealed) {
+                if (i === cur.correctIndex) cls += ' correct';
+                else if (i === quizState.selected) cls += ' wrong';
+              } else if (quizState.selected === i) cls += ' selected';
+              return `<button class="${cls}" onclick="answerQuestion(${i})">
+                <span class="choice-letter">${String.fromCharCode(65+i)}</span><span>${c}</span>
+              </button>`;
+            }).join('')}
+          </div>
+          ${quizState.revealed && cur.explanation ? `<div class="explanation"><strong>Why:</strong> ${cur.explanation}</div>` : ''}
+          ${quizState.revealed ? `<button class="next-btn" onclick="nextQuestion()">Next question →</button>` : ''}
+        </div>`;
+      }
+    } else {
+      html += renderAddForm();
+    }
+    html += `</div>`;
+    return html;
+  }
+
+  function renderAddForm() {
+    let html = '';
+    if (state.questions.length < 5) {
+      html += `<div class="seed-banner">
+        <div style="flex:1">
+          <div class="seed-banner-title">Starter pack available</div>
+          <div class="seed-banner-text">20 original practice questions written in ACT style, weighted toward Math & Science. Load them to start drilling today.</div>
+        </div>
+        <button class="seed-banner-btn" onclick="loadSeedQuestions()">Load starter questions</button>
+      </div>`;
+    }
+    html += `<div class="form-card">
+      <div class="form-label">SECTION</div>
+      <div class="filter-row">
+        ${SECTIONS.map(s => `<button class="filter-chip ${addFormState.section===s?'active':''}" style="${addFormState.section===s?`background:${SECTION_COLOR[s]};border-color:${SECTION_COLOR[s]}`:''}" onclick="setAddSection('${s}')">${s}</button>`).join('')}
+      </div>
+      <div class="form-label">QUESTION</div>
+      <textarea rows="3" id="q-text" placeholder="Type the question here…" oninput="addFormState.text=this.value">${addFormState.text}</textarea>
+      <div class="form-label">ANSWER CHOICES — tap the letter to mark correct</div>
+      ${addFormState.choices.map((c,i) => `
+        <div class="choice-input-row">
+          <button class="correct-toggle ${addFormState.correctIndex===i?'active':''}" onclick="setCorrectIndex(${i})">${String.fromCharCode(65+i)}</button>
+          <input class="text-input" placeholder="Choice ${String.fromCharCode(65+i)}" value="${c}" oninput="setChoiceText(${i}, this.value)">
+        </div>
+      `).join('')}
+      <div class="form-label">EXPLANATION (optional)</div>
+      <textarea rows="2" placeholder="Why the correct answer is correct." oninput="addFormState.explanation=this.value">${addFormState.explanation}</textarea>
+      <button class="submit-btn" onclick="submitQuestion()">+ Add to bank</button>
+    </div>
+    <button class="list-toggle" onclick="toggleQList()">${addFormState.showList?'▲':'▼'} ${state.questions.length} question${state.questions.length===1?'':'s'} in bank</button>`;
+    if (addFormState.showList) {
+      html += `<div class="q-list">`;
+      if (state.questions.length === 0) html += `<div style="font-size:12.5px;color:rgba(30,37,48,0.4);padding:8px;">Nothing added yet.</div>`;
+      state.questions.forEach(q => {
+        html += `<div class="q-list-item">
+          <span class="jersey-tag" style="background:${SECTION_COLOR[q.section]};flex-shrink:0;">${q.section.slice(0,4).toUpperCase()}</span>
+          <span class="q-list-text">${q.text}</span>
+          <button class="icon-btn" onclick="deleteQuestion('${q.id}')">🗑</button>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+    return html;
+  }
+
+  function renderSchedule() {
+    const phases = buildPhases();
+    let html = `<div class="pane">
+      <div class="section-label-wrap"><div class="section-label">PLAN TO TEST DAY</div><div class="section-label-sub">auto-adjusted to today's date — check off as he completes each phase</div></div>`;
+    phases.forEach(phase => {
+      const items = phase.tasks;
+      const doneCount = items.filter((_,i) => state.checklist[`${phase.id}-${i}`]).length;
+      const current = isPhaseCurrent(phase);
+      html += `<div class="phase-card ${current?'current':''}">
+        <div class="phase-header">
+          <div class="phase-num">${String(phase.id).padStart(2,'0')}</div>
+          <div style="flex:1">
+            <div class="phase-range">${fmtDate(phase.startDate)} – ${fmtDate(phase.endDate)} (${phase.dayCount} days)</div>
+            <div class="phase-label">${phase.label}</div>
+            <div class="phase-detail">${phase.detail}</div>
+            ${current ? '<div class="current-badge">● CURRENT PHASE</div>' : ''}
+          </div>
+          <div class="phase-progress tabular">${doneCount}/${items.length}</div>
+        </div>
+        <div class="task-list">
+          ${items.map((t,i) => {
+            const key = `${phase.id}-${i}`;
+            const done = !!state.checklist[key];
+            return `<button class="task-row" onclick="toggleTask('${key}')">
+              <span class="checkbox ${done?'done':''}">${done?'✓':''}</span>
+              <span class="task-text ${done?'done':''}">${t}</span>
+            </button>`;
+          }).join('')}
+        </div>
+      </div>`;
+    });
+    html += `<div class="deadline-card">
+      <div class="deadline-title">HARD DEADLINES</div>
+      <div class="deadline-row"><div><div class="deadline-label">Registration deadline</div><div class="deadline-note">Confirm exact date at act.org — register early</div></div><div class="deadline-date tabular">~Sept 12, 2026</div></div>
+      <div class="deadline-row"><div><div class="deadline-label">Test day</div><div class="deadline-note">Admission ticket, photo ID, approved calculator</div></div><div class="deadline-date tabular">Oct 17, 2026</div></div>
+    </div></div>`;
+    return html;
+  }
+
+  function renderProgress(parentMode) {
+    const stats = bySectionStats();
+    const sessions = [...state.sessions].sort((a,b) => new Date(b.date) - new Date(a.date));
+    let html = `<div class="pane">
+      <div class="section-label-wrap"><div class="section-label">SCOUTING REPORT</div><div class="section-label-sub">how the drills are trending</div></div>
+      <div class="progress-bars">
+        ${stats.map(s => `
+          <div class="progress-bar-row">
+            <div class="progress-bar-label-row">
+              <span class="jersey-tag" style="background:${SECTION_COLOR[s.section]}">${s.section.slice(0,4).toUpperCase()}</span>
+              <span class="progress-bar-pct tabular">${s.acc===null?'—':s.acc+'%'}</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width:${s.acc??0}%;background:${s.acc!==null && s.acc<60 ? '#B23B3B' : '#3D7A6E'}"></div></div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="section-label-wrap"><div class="section-label">SESSION LOG</div></div>`;
+    if (sessions.length === 0) {
+      html += `<div class="empty-nudge">⚠️ No drill sessions logged yet.</div>`;
+    }
+    sessions.forEach(s => {
+      const c = s.answers.filter(a=>a.correct).length;
+      const pct = Math.round((c/s.answers.length)*100);
+      const color = pct>=70?'#3D7A6E':pct>=50?'#5B8DEF':'#B23B3B';
+      html += `<div class="session-log-row">
+        <div class="session-log-date">${new Date(s.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+        <div class="session-log-meta">${s.answers.length} questions</div>
+        <div class="session-log-pct tabular" style="color:${color}">${pct}%</div>
+      </div>`;
+    });
+    html += `</div>`;
+    return html;
+  }
+
+  // ---------- Actions ----------
+  window.setQuizMode = function(m) { quizState.mode = m; quizState.current = null; render(); };
+  window.setFilter = function(s) { quizState.filterSection = s; quizState.current = null; quizState.sessionAnswers = []; render(); };
+  window.answerQuestion = function(i) {
+    if (quizState.revealed) return;
+    quizState.selected = i;
+    quizState.revealed = true;
+    quizState.sessionAnswers.push({ section: quizState.current.section, correct: i === quizState.current.correctIndex });
+    render();
+  };
+  window.nextQuestion = function() {
+    const pool = quizState.filterSection === 'All' ? state.questions : state.questions.filter(q => q.section === quizState.filterSection);
+    if (!pool.length) { quizState.current = null; render(); return; }
+    quizState.current = pool[Math.floor(Math.random()*pool.length)];
+    quizState.selected = null;
+    quizState.revealed = false;
+    render();
+  };
+  window.finishSession = function() {
+    if (!quizState.sessionAnswers.length) return;
+    const next = { ...state, sessions: [...state.sessions, { id: uid(), date: new Date().toISOString(), answers: quizState.sessionAnswers }] };
+    quizState.sessionAnswers = [];
+    persist(next);
+  };
+  window.deleteQuestion = function(id) {
+    const next = { ...state, questions: state.questions.filter(q => q.id !== id) };
+    if (quizState.current && quizState.current.id === id) quizState.current = null;
+    persist(next);
+  };
+  window.loadSeedQuestions = function() {
+    const withIds = SEED_QUESTIONS.map(q => ({ ...q, id: uid() }));
+    persist({ ...state, questions: [...state.questions, ...withIds] });
+  };
+  window.setAddSection = function(s) { addFormState.section = s; render(); };
+  window.setCorrectIndex = function(i) { addFormState.correctIndex = i; render(); };
+  window.setChoiceText = function(i, val) { addFormState.choices[i] = val; };
+  window.toggleQList = function() { addFormState.showList = !addFormState.showList; render(); };
+  window.submitQuestion = function() {
+    const textEl = document.getElementById('q-text');
+    addFormState.text = textEl ? textEl.value : addFormState.text;
+    if (!addFormState.text.trim() || addFormState.choices.some(c => !c.trim())) {
+      alert('Please fill in the question and all 4 answer choices.');
+      return;
+    }
+    const q = { id: uid(), section: addFormState.section, text: addFormState.text.trim(), choices: addFormState.choices.map(c=>c.trim()), correctIndex: addFormState.correctIndex, explanation: addFormState.explanation.trim() };
+    const next = { ...state, questions: [...state.questions, q] };
+    addFormState = { section: 'Math', text: '', choices: ['','','',''], correctIndex: 0, explanation: '', showList: addFormState.showList };
+    persist(next);
+  };
+  window.toggleTask = function(key) {
+    persist({ ...state, checklist: { ...state.checklist, [key]: !state.checklist[key] } });
+  };
+
+  // ---------- Boot ----------
+  async function boot() {
+    const loaded = await loadState();
+    if (loaded) state = { ...DEFAULT_STATE, ...loaded };
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    render();
+
+    // live sync: if either view changes data, the other updates within seconds
+    subscribeState((remote) => {
+      state = { ...DEFAULT_STATE, ...remote };
+      render();
+    });
+  }
+
+  if (!firebaseReady) {
+    document.getElementById('loading').innerHTML = `
+      <div class="loading-mark">⚠</div>
+      <div class="loading-sub" style="max-width:280px;text-align:center;line-height:1.6;">
+        Firebase isn't configured yet.<br>Add your project config in index.html to enable saving.
+      </div>`;
+  } else {
+    boot();
+  }
+</script>
+</body>
+</html>
